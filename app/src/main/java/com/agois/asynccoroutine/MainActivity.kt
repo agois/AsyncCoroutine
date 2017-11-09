@@ -18,13 +18,20 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
-            val async = object : AsyncCoroutine<String, Void, String>() {
-                override fun doInBackground(params: Array<String>): String {
+            val async = object : AsyncCoroutine<String, String, String>() {
+                override fun doInBackground(vararg params: String): String {
                     for (i in 1..5) {
                         Log.w("agois", "here " + i)
+                        publishProgress(""+i)
                         Thread.sleep(100)
                     }
                     return "res"
+                }
+
+                override fun onProgressUpdate(vararg progress: String) {
+                    for (i in progress)
+                        Snackbar.make(view, "RUN " + i, Snackbar.LENGTH_SHORT)
+                                .setAction("Action", null).show()
                 }
 
                 override fun onPostExecute(result: String) {
@@ -33,7 +40,7 @@ class MainActivity : AppCompatActivity() {
                             .setAction("Action", null).show()
                 }
             }
-            async.execute(Array(1, init = {"1"}))
+            async.execute(*arrayOf("1"))
         }
     }
 
